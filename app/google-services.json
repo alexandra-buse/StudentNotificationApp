@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "552901332210",
+    "project_id": "studentnotificationapp",
+    "storage_bucket": "studentnotificationapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:552901332210:android:cf5d937467b55ba076d46b",
+        "android_client_info": {
+          "package_name": "com.example.studentnotificationapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "552901332210-00h43vsbakc0vq8cutplfkkuiguvuq96.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyClKpjR6kpgETGEu198jG6wulgiaVKYLPA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "552901332210-00h43vsbakc0vq8cutplfkkuiguvuq96.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

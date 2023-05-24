@@ -1,0 +1,6 @@
+<resources>
+    <style name="CalendarDayWithEvent">
+        <item name="android:background">@drawable/calendar_day_event</item>
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+</resources>

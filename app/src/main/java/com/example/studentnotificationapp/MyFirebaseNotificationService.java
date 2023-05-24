@@ -1,10 +1,12 @@
 package com.example.studentnotificationapp;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
@@ -13,11 +15,14 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.core.app.NotificationBuilderWithBuilderAccessor;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.example.studentnotificationapp.MainActivity;
+import com.example.studentnotificationapp.EventDetailActivity;
 
 public class MyFirebaseNotificationService extends FirebaseMessagingService {
     @Override
@@ -28,20 +33,15 @@ public class MyFirebaseNotificationService extends FirebaseMessagingService {
         Log.d("MainActivity", "Am I here?");
 
         // Check if message contains a notification payload.
-        if (remoteMessage.getNotification() != null) {
-            System.out.println("Message Notification Body: " + remoteMessage.getNotification().getBody());
+        if (remoteMessage.getData() != null) {
+            System.out.println("Message Notification Body: ");
         }
-
-        //String title = remoteMessage.getData().get("title"); // Get title
-        //String body = remoteMessage.getData().get("body");
-        String title = remoteMessage.getNotification().getTitle();
-        String body = remoteMessage.getNotification().getBody();
-
-        // Also if you intend on generating your own notifications as a result of a received FCM
-        // message, here is where that should be initiated. See sendNotification method below.
-       // sendNotification(remoteMessage.getFrom(), remoteMessage.getNotification().getBody());
-        //sendNotification(remoteMessage.getNotification().getBody());
-        sendNotification(title, body);
+        else {
+            Log.d("MainActivity", "Hellllllau");
+        }
+        Log.d("MainActivity", "Message ok");
+;
+        sendNotification(remoteMessage);
     }
 
 //    private void sendNotification(String from, String body) {
@@ -54,39 +54,69 @@ public class MyFirebaseNotificationService extends FirebaseMessagingService {
 //        });
 //    }
 
-    private void sendNotification(String messageTile, String messageBody) {
-        Intent intent = new Intent(this, EventDetailActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.putExtra("eventTitle", messageBody);
-        intent.putExtra("eventDescription", messageBody);
-        intent.putExtra("eventCategory", "Tech");
-        Log.d("MainActivity", "I am here!!!");
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
-                PendingIntent.FLAG_ONE_SHOT);
+    private void sendNotification(RemoteMessage messageBody) {
 
-        String channelId = "My channel ID";
-        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder notificationBuilder =
-                new NotificationCompat.Builder(this, channelId)
-                        .setSmallIcon(R.drawable.ic_stat_notification)
-                        .setContentTitle(messageTile)
-                        .setContentText(messageBody)
-                        .setAutoCancel(true)
-                        .setSound(defaultSoundUri)
-                        .setContentIntent(pendingIntent);
+        Log.d("MainActivity", "OK?");
+        String title = messageBody.getData().get("title");
+        String description = messageBody.getData().get("body");
+//        Log.d("MainActivity", "Got data");
+//        Log.d("MainActivity", title);
+//        Log.d("MainActivity", description);
+//        Intent intent = new Intent(this, EventDetailActivity.class);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//        intent.putExtra("eventTitle", title);
+//        intent.putExtra("eventDescription", description);
+//        intent.putExtra("eventCategory", "Tech");
+        Log.d("MainActivity", "I am here!!!");
+//        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
+//                PendingIntent.FLAG_ONE_SHOT);
 
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        // Since android Oreo notification channel is needed.
-        //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        NotificationChannel channel = new NotificationChannel(channelId,
-                    "Channel human readable title",
+        Log.d("MainActivity", "still ok");
+        String NOTIFICATION_CHANNEL_ID="EDMTDev";
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Log.d("MainActivity", "Ok2");
+            NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "My notification",
                     NotificationManager.IMPORTANCE_HIGH);
-            notificationManager.createNotificationChannel(channel);
-        //}
+
+            notificationChannel.setDescription("My channel");
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(Color.RED);
+            notificationChannel.enableVibration(true);
+
+            notificationManager.createNotificationChannel(notificationChannel);
+        }
+
+        Log.d("MainActivity", "Ok3");
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
+        notificationBuilder.setAutoCancel(true)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setWhen(System.currentTimeMillis())
+                .setSmallIcon(R.drawable.ic_stat_notification)
+                .setTicker("Hearty365")
+                .setContentTitle(title)
+                .setContentText(description)
+//                .setContentIntent(pendingIntent)
+                .setContentInfo("info");
+
+//        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+//        NotificationCompat.Builder notificationBuilder =
+//                new NotificationCompat.Builder(this, channelId)
+//                        .setSmallIcon(R.drawable.ic_stat_notification)
+//                        .setContentTitle(messageTile)
+//                        .setContentText(messageBody)
+//                        .setAutoCancel(true)
+//                        .setSound(defaultSoundUri)
+//                        .setContentIntent(pendingIntent);
+
+
+
+        Log.d("MainActivity", "Build ok");
         //getSystemService(NotificationManager.class).createNotificationChannel(channel);
         //NotificationManagerCompat.from(this).notify(1, notificationBuilder.build());
-        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+        notificationManager.notify(1 /* ID of notification */, notificationBuilder.build());
+        Log.d("MainActivity", "Notify ok");
     }
 }

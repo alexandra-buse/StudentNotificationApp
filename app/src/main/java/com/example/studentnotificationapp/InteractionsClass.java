@@ -1,9 +1,10 @@
 package com.example.studentnotificationapp;
 
 public class InteractionsClass {
-    private String user, event, liked, recommended, opened, categoryMatched, addedToCalendar;
+    private String user, event;
+    private Integer liked, recommended, opened, categoryMatched, addedToCalendar;
 
-    public InteractionsClass(String user, String event, String liked, String recommended, String opened, String categoryMatched, String addedToCalendar) {
+    public InteractionsClass(String user, String event, Integer liked, Integer recommended, Integer opened, Integer categoryMatched, Integer addedToCalendar) {
         this.user = user;
         this.event = event;
         this.liked = liked;
@@ -29,43 +30,43 @@ public class InteractionsClass {
         this.event = event;
     }
 
-    public String getLiked() {
+    public Integer getLiked() {
         return liked;
     }
 
-    public void setLiked(String liked) {
+    public void setLiked(Integer liked) {
         this.liked = liked;
     }
 
-    public String getRecommended() {
+    public Integer getRecommended() {
         return recommended;
     }
 
-    public void setRecommended(String recommended) {
+    public void setRecommended(Integer recommended) {
         this.recommended = recommended;
     }
 
-    public String getOpened() {
+    public Integer getOpened() {
         return opened;
     }
 
-    public void setOpened(String opened) {
+    public void setOpened(Integer opened) {
         this.opened = opened;
     }
 
-    public String getCategoryMatched() {
+    public Integer getCategoryMatched() {
         return categoryMatched;
     }
 
-    public void setCategoryMatched(String categoryMatched) {
+    public void setCategoryMatched(Integer categoryMatched) {
         this.categoryMatched = categoryMatched;
     }
 
-    public String getAddedToCalendar() {
+    public Integer getAddedToCalendar() {
         return addedToCalendar;
     }
 
-    public void setAddedToCalendar(String addedToCalendar) {
+    public void setAddedToCalendar(Integer addedToCalendar) {
         this.addedToCalendar = addedToCalendar;
     }
 }

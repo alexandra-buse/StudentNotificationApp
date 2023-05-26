@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,7 +30,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class EventDetailActivity extends AppCompatActivity {
-    Boolean clicked = true;
+    Boolean clicked;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,16 +47,40 @@ public class EventDetailActivity extends AppCompatActivity {
         String eventDate = intent.getStringExtra("eventDate");
         String eventHour = intent.getStringExtra("eventHour");
 
+        // set up the Like and Add to Calendar buttons
+        ImageView likeButton = findViewById(R.id.likeView);
+
+
 
         FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         String uid = currentFirebaseUser.getUid();
+
+        ApiUtilities.getApiInterface().setEventOpened(uid, eventId).enqueue(new Callback<MainInteractionsFromApi>() {
+            @Override
+            public void onResponse(Call<MainInteractionsFromApi> call, Response<MainInteractionsFromApi> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<MainInteractionsFromApi> call, Throwable t) {
+
+            }
+        });
+
         ApiUtilities.getApiInterface().getInteractionWithEvent(uid, eventId).enqueue(new Callback<MainInteractionsFromApi>() {
             @Override
             public void onResponse(Call<MainInteractionsFromApi> call, Response<MainInteractionsFromApi> response) {
-                Log.d("MainActivity", "SOMETHING");
                 if (response.isSuccessful()) {
-                    Log.d("MainActivity", "Response");
                     ArrayList<InteractionsClass> currentInteraction = response.body().getInteractions();
+                    Integer likedOrNot = currentInteraction.get(0).getLiked();
+                    if (likedOrNot == 1) {
+                        clicked = true;
+                        likeButton.setImageResource(R.drawable.filled_heart);
+                    }
+                    else {
+                        likeButton.setImageResource(R.drawable.border_heart);
+                        clicked = false;
+                    }
                 }
             }
 
@@ -98,18 +123,39 @@ public class EventDetailActivity extends AppCompatActivity {
             imageView.setImageResource(R.drawable.courses_logo);
         }
 
-        // set up the Like and Add to Calendar buttons
-        ImageView likeButton = findViewById(R.id.likeView);
-
         likeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (clicked) {
-                    clicked = false;
-                    likeButton.setImageResource(R.drawable.filled_heart);
-                } else {
+                if (clicked == false) {
                     clicked = true;
+                    likeButton.setImageResource(R.drawable.filled_heart);
+
+                    ApiUtilities.getApiInterface().setEventLiked(uid, eventId).enqueue(new Callback<MainInteractionsFromApi>() {
+                        @Override
+                        public void onResponse(Call<MainInteractionsFromApi> call, Response<MainInteractionsFromApi> response) {
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<MainInteractionsFromApi> call, Throwable t) {
+
+                        }
+                    });
+                } else {
+                    clicked = false;
                     likeButton.setImageResource(R.drawable.border_heart);
+
+                    ApiUtilities.getApiInterface().setEventUnliked(uid, eventId).enqueue(new Callback<MainInteractionsFromApi>() {
+                        @Override
+                        public void onResponse(Call<MainInteractionsFromApi> call, Response<MainInteractionsFromApi> response) {
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<MainInteractionsFromApi> call, Throwable t) {
+
+                        }
+                    });
                 }
             }
         });
@@ -124,7 +170,32 @@ public class EventDetailActivity extends AppCompatActivity {
         addToCalendarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // handle add to calendar button click
+                Log.d("MainActivity", "Clicked");
+                ApiUtilities.getApiInterface().setEventAddToCalendar(uid, eventId).enqueue(new Callback<MainInteractionsFromApi>() {
+                    @Override
+                    public void onResponse(Call<MainInteractionsFromApi> call, Response<MainInteractionsFromApi> response) {
+                        if (response.isSuccessful()) {
+                            Log.d("MainActivity", "Response");
+                            ArrayList<InteractionsClass> currentInteraction = response.body().getInteractions();
+                            Integer addedToCalendar = currentInteraction.get(0).getAddedToCalendar();
+                            Log.d("MainActivity", String.valueOf(addedToCalendar));
+                            if (addedToCalendar == 1) {
+                                Log.d("MainActivity", "OK");
+                                Toast.makeText(EventDetailActivity.this, "Event added to Calendar", Toast.LENGTH_SHORT).show();
+                            }
+                            else {
+                                Log.d("MainActivity", "Double ok");
+                                Toast.makeText(EventDetailActivity.this, "Event already in Calendar", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<MainInteractionsFromApi> call, Throwable t) {
+                        Log.d("MainActivity", "Failure");
+                    }
+                });
+
             }
         });
 

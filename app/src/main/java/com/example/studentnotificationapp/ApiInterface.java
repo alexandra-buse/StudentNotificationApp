@@ -20,9 +20,21 @@ public interface ApiInterface {
     @GET("/events/school/")
     Call<MainEventsFromApi>getSchoolEvents(@Query("uid") String uid);
 
-    @GET("/events/school/")
+    @GET("/events/calendar/")
     Call<MainEventsFromApi>getCalendarEvents(@Query("uid") String uid);
 
-    @GET("/interaction")
+    @GET("/interaction/")
     Call<MainInteractionsFromApi>getInteractionWithEvent(@Query("uid") String uid,  @Query("event") String event);
+
+    @GET("/interaction/setOpened/")
+    Call<MainInteractionsFromApi>setEventOpened(@Query("uid") String uid,  @Query("event") String event);
+
+    @GET("/interaction/like/")
+    Call<MainInteractionsFromApi>setEventLiked(@Query("uid") String uid,  @Query("event") String event);
+
+    @GET("/interaction/unlike/")
+    Call<MainInteractionsFromApi>setEventUnliked(@Query("uid") String uid,  @Query("event") String event);
+
+    @GET("/interaction/addToCalendar/")
+    Call<MainInteractionsFromApi>setEventAddToCalendar(@Query("uid") String uid,  @Query("event") String event);
 }

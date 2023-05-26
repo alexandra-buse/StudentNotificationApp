@@ -1,13 +1,23 @@
 package com.example.studentnotificationapp;
 
 public class ModelClass {
-    private String title, description, category, date;
+    private String eventId, title, description, category, date, hour;
 
-    public ModelClass(String title, String description, String category, String date) {
+    public ModelClass(String eventId, String title, String description, String category, String date, String hour) {
+        this.eventId = eventId;
         this.title = title;
         this.description = description;
         this.category = category;
         this.date = date;
+        this.hour = hour;
+    }
+
+    public String getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
     }
 
     public String getTitle() {
@@ -40,5 +50,13 @@ public class ModelClass {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public String getHour() {
+        return hour;
+    }
+
+    public void setHour(String hour) {
+        this.hour = hour;
     }
 }

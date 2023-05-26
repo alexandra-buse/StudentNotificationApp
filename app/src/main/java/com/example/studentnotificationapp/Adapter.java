@@ -46,6 +46,9 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
                 intent.putExtra("eventTitle", selectedEvent.getTitle());
                 intent.putExtra("eventDescription", selectedEvent.getDescription());
                 intent.putExtra("eventCategory", selectedEvent.getCategory());
+                intent.putExtra("eventId", selectedEvent.getEventId());
+                intent.putExtra("eventDate", selectedEvent.getDate());
+                intent.putExtra("eventHour", selectedEvent.getHour());
                 // add any other event details that you want to pass to the new activity
                 context.startActivity(intent);
             }

@@ -1,16 +1,45 @@
 package com.example.studentnotificationapp;
 
+import android.graphics.Color;
+
+import android.icu.util.Calendar;
+import android.net.ParseException;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CalendarView;
-import java.util.Calendar;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.prolificinteractive.materialcalendarview.CalendarDay;
+import com.prolificinteractive.materialcalendarview.CalendarMode;
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
+import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
+
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+
+
 
 public class CalendarFragment extends Fragment {
+
+    ArrayList<ModelClass> modelClassArrayList;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -52,43 +81,83 @@ public class CalendarFragment extends Fragment {
         }
     }
 
-    private CalendarView mCalendarView;
+    private MaterialCalendarView mCalendarView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_calendar, container, false);
 
-        mCalendarView = view.findViewById(R.id.calendarView);
+        mCalendarView = (MaterialCalendarView) view.findViewById(R.id.calendarView);
+
+        mCalendarView.state().edit()
+                .setFirstDayOfWeek(Calendar.MONDAY)
+                        .setCalendarDisplayMode(CalendarMode.MONTHS)
+                                .commit();
+
 
         // Set a listener to detect when the user selects a date
-        mCalendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+        mCalendarView.setOnDateChangedListener(new OnDateSelectedListener() {
             @Override
-            public void onSelectedDayChange(CalendarView calendarView, int year, int month, int dayOfMonth) {
-                // TODO: handle date selection
+            public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
+                //Toast.makeText(this)
             }
         });
 
+          List<CalendarDay> eventDays = getEventDays();
 
-//         Set the background color of days with events
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.MONTH, Calendar.MAY); // replace with your desired month
-        calendar.set(Calendar.DAY_OF_MONTH, 1); // start at the first day of the month
-        int daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
-        for (int i = 1; i <= daysInMonth; i++) {
-            if (i % 3 == 0) { // replace with your own condition for checking if a day has an event
-                long timeInMillis = calendar.getTimeInMillis();
-               // mCalendarView.setDateTextAppearance(R.style.CalendarDayWithEvent);
-            }
-           // calendar.add(Calendar.DAY_OF_MONTH, 1);
-        }
+
+
 
         return view;
     }
 
+    public List<CalendarDay> getEventDays() {
+        List<CalendarDay> eventDays = new ArrayList<>();
+
+        modelClassArrayList=new ArrayList<>();
+        FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        String uid = currentFirebaseUser.getUid();
+        ApiUtilities.getApiInterface().getCalendarEvents(uid).enqueue(new Callback<MainEventsFromApi>() {
+            @Override
+            public void onResponse(Call<MainEventsFromApi> call, Response<MainEventsFromApi> response) {
+                Log.d("MainActivity", "SOMETHING");
+                if (response.isSuccessful()) {
+                    Log.d("MainActivity", "Response");
+                    modelClassArrayList.addAll(response.body().getEvents());
+
+                    for (int i = 0; i < modelClassArrayList.size(); i++) {
+                        Log.d("MainActivity", "Looping");
+                        String date = modelClassArrayList.get(i).getDate();
+                        Log.d("MainActivity", date);
+                        DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+                        try {
+                            Date eventDate = format.parse(date);
+                            CalendarDay day = CalendarDay.from(eventDate);
+                            Log.d("MainActivity", day.toString());
+                            eventDays.add(day);
+                        } catch (ParseException | java.text.ParseException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                    int eventColor = Color.RED; // or any other color you want
+                    Log.d("MainActivity", "Add decorator");
+                    EventDecorator eventDecorator = new EventDecorator(eventColor, eventDays);
+                    mCalendarView.addDecorator(eventDecorator);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MainEventsFromApi> call, Throwable t) {
+                Log.d("MainActivity", t.getMessage());
+            }
+        });
 
 
 
+        return eventDays;
+    }
 
 
 }

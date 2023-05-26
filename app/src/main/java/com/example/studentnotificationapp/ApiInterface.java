@@ -16,4 +16,13 @@ public interface ApiInterface {
 
     @GET("/events/recommended/")
     Call<MainEventsFromApi>getRecommendedEvents(@Query("uid") String uid);
+
+    @GET("/events/school/")
+    Call<MainEventsFromApi>getSchoolEvents(@Query("uid") String uid);
+
+    @GET("/events/school/")
+    Call<MainEventsFromApi>getCalendarEvents(@Query("uid") String uid);
+
+    @GET("/interaction")
+    Call<MainInteractionsFromApi>getInteractionWithEvent(@Query("uid") String uid,  @Query("event") String event);
 }

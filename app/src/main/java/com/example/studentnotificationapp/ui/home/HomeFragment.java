@@ -64,7 +64,7 @@ public class HomeFragment extends Fragment {
                         textView.setText(userName);
                         binding.userSectie.setText(userProfile.Sectie);
                         binding.userCiclu.setText(userProfile.Ciclu);
-                        binding.userAnStudii.setText("Anulllllll " + userProfile.An);
+                        binding.userAnStudii.setText("Anul " + userProfile.An);
                         binding.userSerie.setText("Seria " + userProfile.Serie);
                         binding.userGrupa.setText("Grupa " + userProfile.Grupa);
                         for (int i = 0; i < allTopics.size(); i++) {

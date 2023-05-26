@@ -1,6 +1,8 @@
 package com.example.studentnotificationapp;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.net.ParseException;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -12,19 +14,59 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.prolificinteractive.materialcalendarview.CalendarDay;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class EventDetailActivity extends AppCompatActivity {
+    Boolean clicked = true;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.event_detail_activity);
-        Log.d("MainActivity", "Should be here!");
+
 
         // get the event details from the intent
         Intent intent = getIntent();
         String eventTitle = intent.getStringExtra("eventTitle");
         String eventDescription = intent.getStringExtra("eventDescription");
         String eventCategory = intent.getStringExtra("eventCategory");
+        String eventId = intent.getStringExtra("eventId");
+        String eventDate = intent.getStringExtra("eventDate");
+        String eventHour = intent.getStringExtra("eventHour");
+
+
+        FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        String uid = currentFirebaseUser.getUid();
+        ApiUtilities.getApiInterface().getInteractionWithEvent(uid, eventId).enqueue(new Callback<MainInteractionsFromApi>() {
+            @Override
+            public void onResponse(Call<MainInteractionsFromApi> call, Response<MainInteractionsFromApi> response) {
+                Log.d("MainActivity", "SOMETHING");
+                if (response.isSuccessful()) {
+                    Log.d("MainActivity", "Response");
+                    ArrayList<InteractionsClass> currentInteraction = response.body().getInteractions();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MainInteractionsFromApi> call, Throwable t) {
+                Log.d("MainActivity", t.getMessage());
+            }
+
+
+        });
+
 
         // populate the views in your layout with the event details
         TextView titleView = findViewById(R.id.eventTitle);
@@ -57,14 +99,28 @@ public class EventDetailActivity extends AppCompatActivity {
         }
 
         // set up the Like and Add to Calendar buttons
-        Button likeButton = findViewById(R.id.likeButton);
-        Button addToCalendarButton = findViewById(R.id.addToCalendarButton);
+        ImageView likeButton = findViewById(R.id.likeView);
+
         likeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // handle like button click
+                if (clicked) {
+                    clicked = false;
+                    likeButton.setImageResource(R.drawable.filled_heart);
+                } else {
+                    clicked = true;
+                    likeButton.setImageResource(R.drawable.border_heart);
+                }
             }
         });
+
+        Button addToCalendarButton = findViewById(R.id.addToCalendarButton);
+//        likeButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                // handle like button click
+//            }
+//        });
         addToCalendarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

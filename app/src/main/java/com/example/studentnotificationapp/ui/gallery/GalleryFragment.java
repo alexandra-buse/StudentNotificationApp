@@ -42,8 +42,8 @@ import java.util.Map;
 public class GalleryFragment extends Fragment {
 
     private static final String[] Topics = new String[]{
-            "Licenta", "Master", "Automatica", "Calculatoare", "1", "2",
-            "3", "4","AA","AB","AC","CA","CB","CC","CD"
+            "Licenta", "Master", "Automatica", "Calculatoare", "Anul 1", "Anul 2",
+            "Anul 3", "Anul 4","AA","AB","AC","CA","CB","CC","CD"
     };
 
     private MultiAutoCompleteTextView choseTopic;

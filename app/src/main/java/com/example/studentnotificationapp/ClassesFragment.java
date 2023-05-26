@@ -44,9 +44,9 @@ public class ClassesFragment extends Fragment {
     }
 
     private void findEvents() {
-        //FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        //String uid = currentFirebaseUser.getUid();
-        ApiUtilities.getApiInterface().getEvents().enqueue(new Callback<MainEventsFromApi>() {
+        FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        String uid = currentFirebaseUser.getUid();
+        ApiUtilities.getApiInterface().getSchoolEvents(uid).enqueue(new Callback<MainEventsFromApi>() {
             @Override
             public void onResponse(Call<MainEventsFromApi> call, Response<MainEventsFromApi> response) {
                 Log.d("MainActivity", "SOMETHING");
